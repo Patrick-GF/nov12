@@ -1,0 +1,12 @@
+streamlit
+supabase
+pandas
+altair
+openpyxl
+Pillow
+numpy
+# OCR opcional para escanear patentes (pesado: descarga PyTorch).
+# Si no se instala, el guardia escribe la patente manualmente.
+easyocr
+opencv-python-headless
+matplotlib

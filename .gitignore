@@ -1,0 +1,25 @@
+# Secretos: NUNCA subir al repositorio público
+.streamlit/secrets.toml
+secrets/
+*.env
+.env
+credenciales_iniciales.csv
+
+# Entorno y caché
+venv/
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+
+# Exportaciones de app2.py
+*.csv
+*.xlsx
+!docs/**
+
+# Configuración local de Claude Code
+.claude/
+
+# Respaldos de secretos (nunca subir)
+.streamlit/secrets*
+*.bak

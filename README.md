@@ -37,7 +37,7 @@ y el bucket `evidencias-vehiculares`; no requiere crear tablas nuevas.
 Con el proyecto Supabase del profesor no hace falta ejecutar SQL. Si montas uno propio y vacío: SQL Editor →
 ejecuta `sql/00_esquema_base.sql` (crea las 4 tablas con sus 30 conductores, 15 vehículos y 18 autorizaciones) y,
 si quieres que la BD también aplique las reglas, `sql/01_opcional_reglas_en_bd.sql`. Crea además el bucket
-`evidencias-vehiculares` (límite 800 KB) y cambia URL y clave en `secrets.toml`.
+`evidencias-vehiculares` (límite 800 KB; debe permitir imágenes y también `application/json`, porque ahí se guarda la bitácora de accesos) y cambia URL y clave en `secrets.toml`.
 
 ## Despliegue (Streamlit Community Cloud)
 

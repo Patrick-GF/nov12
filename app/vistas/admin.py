@@ -168,7 +168,7 @@ def analitica() -> None:
     conteo = accesos.groupby(["unidad_destino", "resultado"]).size().reset_index(name="accesos")
     graf = alt.Chart(conteo).mark_bar().encode(
         y=alt.Y("unidad_destino:N", sort="-x", title="Unidad / sector"),
-        x=alt.X("accesos:Q", title="Accesos"),
+        x=alt.X("accesos:Q", title="Accesos", axis=alt.Axis(tickMinStep=1, format="d")),
         color=alt.Color("resultado:N", title="Resultado"),
         tooltip=["unidad_destino", "resultado", "accesos"],
     )

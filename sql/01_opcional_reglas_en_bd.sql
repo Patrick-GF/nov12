@@ -100,8 +100,9 @@ left join lateral (
    order by x.fecha_reporte desc, x.id desc limit 1
 ) r on true;
 
--- 5. Storage: bucket de evidencias (800 KB por imagen). No modifica uno ya existente.
+-- 5. Storage: bucket de evidencias (800 KB por imagen). Permite JSON porque la bitácora de accesos se guarda ahí.
+--    No modifica uno ya existente (si ya existe, ver update de allowed_mime_types en el README).
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('evidencias-vehiculares', 'evidencias-vehiculares', false, 819200,
-        array['image/jpeg', 'image/png', 'image/webp'])
+        array['image/jpeg', 'image/png', 'image/webp', 'application/json'])
 on conflict (id) do nothing;

@@ -32,13 +32,19 @@ def checkin() -> None:
         .data
     }
 
+    # El selector va FUERA del formulario: al cambiar de vehículo la página se recalcula
+    # y el kilometraje mínimo/por defecto corresponde al vehículo elegido.
+    patente = st.selectbox(
+        "Vehículo", patentes,
+        format_func=lambda p: f"{p} · {vehiculos[p]['marca_modelo']} ({vehiculos[p]['estado_operativo']})",
+    )
+    km_min = int(vehiculos[patente]["kilometraje_actual"])
+
     with st.form("checkin", clear_on_submit=True):
-        patente = st.selectbox(
-            "Vehículo", patentes,
-            format_func=lambda p: f"{p} · {vehiculos[p]['marca_modelo']} ({vehiculos[p]['estado_operativo']})",
+        km = st.number_input(
+            f"Kilometraje (último registrado: {km_min:,} km)",
+            min_value=0, value=km_min, step=1, key=f"km_{patente}",
         )
-        km_min = int(vehiculos[patente]["kilometraje_actual"])
-        km = st.number_input(f"Kilometraje (último registrado: {km_min:,} km)", min_value=0, value=km_min, step=1)
         combustible = st.slider("Nivel de combustible (%)", 0, 100, 50, step=5)
         c1, c2 = st.columns(2)
         neumaticos = c1.selectbox("Estado de neumáticos", NEUMATICOS)

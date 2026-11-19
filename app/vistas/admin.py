@@ -81,10 +81,48 @@ def _panel_monitoreo() -> None:
     st.caption("Actualización automática cada 15 s.")
 
 
+ICONO = {"Autorizado": "🟢", "Alerta de Estado": "🟡", "Denegado": "🔴"}
+
+
+@st.fragment(run_every=30)
+def _feed_accesos() -> None:
+    """Feed cronológico global de accesos (más recientes primero) con evidencia fotográfica."""
+    st.subheader("Feed de accesos en garita")
+    c1, c2 = st.columns([1, 2])
+    cantidad = c1.slider("Eventos a mostrar", 5, 30, 10, step=5)
+    resultados = c2.multiselect(
+        "Resultado", list(ICONO), default=list(ICONO), key="feed_resultado",
+    )
+    eventos = [e for e in _eventos(date.today() - timedelta(days=7)) if e["resultado"] in resultados]
+    if not eventos:
+        st.info("No hay accesos registrados en los últimos 7 días.")
+        return
+    nombres = dict(zip(_conductores()["rut"], _conductores()["nombre_completo"]))
+    for e in eventos[:cantidad]:
+        col_foto, col_txt = st.columns([1, 4])
+        url = url_firmada(e.get("foto"))
+        if url:
+            col_foto.image(url, width=110)
+        else:
+            col_foto.caption("Sin foto")
+        patente = e.get("patente") or e.get("patente_consultada") or "—"
+        col_txt.markdown(
+            f"{ICONO.get(e['resultado'], '⚪')} **{e['resultado']}** · `{patente}` · "
+            f"{e['fecha_hora'][:19].replace('T', ' ')} UTC  \n"
+            f"{e['motivo']}  \n"
+            f"<small>Conductor: {nombres.get(e.get('rut_conductor'), '—')} · "
+            f"Unidad: {e.get('unidad_destino') or '—'} · Guardia: {e.get('guardia', '—')}</small>",
+            unsafe_allow_html=True,
+        )
+    st.caption(f"Mostrando {min(cantidad, len(eventos))} de {len(eventos)} eventos · actualización cada 30 s.")
+
+
 def monitoreo() -> None:
     exigir_rol("admin")
     st.title("📊 Monitoreo operativo")
     _panel_monitoreo()
+    st.divider()
+    _feed_accesos()
 
 
 # ---------------------------------------------------------------- Analítica

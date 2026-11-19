@@ -34,6 +34,22 @@ flowchart LR
   objeto JSON (`accesos/AAAA-MM-DD/<hora>_<patente>_<id>.json`) junto a su foto; la analítica y la auditoría los leen de ahí.
   Limitación: es adecuado para el volumen del curso; en producción correspondería una tabla indexada.
 
+**Políticas de acceso del bucket `evidencias-vehiculares`**
+
+| Aspecto | Configuración |
+|---|---|
+| Visibilidad | **Privado** (no público): ninguna imagen ni JSON se puede abrir con una URL directa. |
+| Tamaño máximo por objeto | 800 KB (la app además recomprime cada foto a JPEG antes de subirla). |
+| Tipos permitidos | `image/jpeg`, `image/png`, `image/webp` (fotos) y `application/json` (bitácora de accesos). |
+| Escritura / lectura | Solo el servidor Streamlit, con la *secret key* de Supabase guardada en `secrets.toml`; el navegador nunca recibe esa clave. |
+| RLS (Row Level Security) | Activo en el proyecto; no se crean políticas públicas sobre `storage.objects`, de modo que la clave anónima no puede leer ni escribir. |
+| Visualización | La app genera una **URL firmada** temporal (1 hora) cada vez que un administrador abre una foto. |
+| Estructura | `patentes/<patente>/…` (foto del guardia), `odometros/<patente>/…` (foto del conductor), `accesos/AAAA-MM-DD/…` (bitácora). |
+
+Control de acceso a nivel de aplicación: guardia, conductor y administrador ven vistas distintas (`st.navigation` por rol),
+y solo el administrador puede abrir fotos y bitácora. Limitación: la seguridad descansa en la *secret key*; si se filtra,
+da acceso total al proyecto, por eso `secrets.toml` está en `.gitignore`.
+
 ## 2. Modelo de datos
 
 ```mermaid
@@ -113,5 +129,6 @@ sequenceDiagram
 - [ ] Guardia: resultado *Autorizado*, *Denegado* y *Alerta de Estado*
 - [ ] Conductor: reporte con frenos en falla → vehículo pasa a *Requiere Mantención*
 - [ ] Panel BI: disponibilidad, inmovilizadas y matriz verde/amarillo/rojo
+- [ ] Feed cronológico de accesos con fotografías (Monitoreo)
 - [ ] Analítica y Auditoría (foto desde Storage)
 - [ ] Supabase: tablas, bucket `evidencias-vehiculares` y `secrets.toml` fuera del repositorio

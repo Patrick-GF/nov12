@@ -23,10 +23,10 @@ flowchart LR
 
 **Decisiones de arquitectura**
 - *Streamlit con módulos por perfil*: un solo despliegue, interfaz responsive para móvil; cada rol solo ve sus vistas.
-- *Solo las 4 tablas del enunciado*: el proyecto Supabase es el entregado por el profesor y se accede con su clave
-  por API (sin acceso SQL). Por eso las reglas viven en la capa `core/` de Python y no en triggers de la BD.
-  `sql/00_esquema_base.sql` (script del profesor) reconstruye las 4 tablas con sus datos y
-  `sql/01_opcional_reglas_en_bd.sql` lleva las mismas reglas a la BD (trigger, función, vista) si hubiese acceso SQL.
+- *Solo las 4 tablas del enunciado*: la app usa únicamente `conductores`, `vehiculos`, `autorizaciones` y
+  `reportes_estado`, que se crean con `sql/00_esquema_base.sql` (SQL Editor de un proyecto Supabase propio, con sus
+  datos). El acceso es por API con la clave en `secrets.toml`, y las reglas de negocio viven en la capa `core/` de Python.
+  `sql/01_opcional_reglas_en_bd.sql` lleva las mismas reglas a la BD (trigger, función, vista) como alternativa.
 - *Secretos fuera del repositorio*: la clave de Supabase y los hashes de contraseña viven en `.streamlit/secrets.toml`
   (en `.gitignore`); en el despliegue se pegan en *Settings → Secrets*.
 - *Imágenes ≤ 800 KB*: cada foto se redimensiona y recomprime a JPEG antes de subir (el bucket impone el mismo límite).
@@ -124,11 +124,66 @@ sequenceDiagram
   S-->>C: confirmación o alerta
 ```
 
-## 5. Capturas de validación (completar tras ejecutar)
-- [ ] Login y menú por cada rol
-- [ ] Guardia: resultado *Autorizado*, *Denegado* y *Alerta de Estado*
-- [ ] Conductor: reporte con frenos en falla → vehículo pasa a *Requiere Mantención*
-- [ ] Panel BI: disponibilidad, inmovilizadas y matriz verde/amarillo/rojo
-- [ ] Feed cronológico de accesos con fotografías (Monitoreo)
-- [ ] Analítica y Auditoría (foto desde Storage)
-- [ ] Supabase: tablas, bucket `evidencias-vehiculares` y `secrets.toml` fuera del repositorio
+## 5. Capturas de validación
+
+Las imágenes están en [`docs/capturas/`](capturas/).
+
+**Login**
+
+![Login](capturas/01_login.jpg)
+
+**Guardia: pantalla de inicio y menú del rol**
+
+![Guardia: pantalla de inicio y menú del rol](capturas/02_guardia_inicio.jpg)
+
+**Conductor: check-in de kilometraje**
+
+![Conductor: check-in de kilometraje](capturas/03_conductor_checkin.jpg)
+
+**Conductor: reporte con frenos en falla**
+
+![Conductor: reporte con frenos en falla](capturas/04_conductor_reporte_falla_frenos.jpg)
+
+**Guardia: resultado *Autorizado***
+
+![Guardia: resultado *Autorizado*](capturas/05_guardia_autorizado.jpg)
+
+**Guardia: resultado *Denegado***
+
+![Guardia: resultado *Denegado*](capturas/06_guardia_denegado.jpg)
+
+**Guardia: resultado *Alerta de Estado***
+
+![Guardia: resultado *Alerta de Estado*](capturas/07_guardia_alerta_estado.jpg)
+
+**Admin: panel de monitoreo (disponibilidad, inmovilizadas, matriz verde/amarillo/rojo)**
+
+![Admin: panel de monitoreo (disponibilidad, inmovilizadas, matriz verde/amarillo/rojo)](capturas/09_admin_monitoreo.jpg)
+
+**Admin: alertas por fallas y feed cronológico de accesos**
+
+![Admin: alertas por fallas y feed cronológico de accesos](capturas/10_admin_alertas_y_feed.jpg)
+
+**Admin: analítica de kilometraje**
+
+![Admin: analítica de kilometraje](capturas/11a_analitica_km.jpg)
+
+**Admin: analítica de frecuencia de accesos**
+
+![Admin: analítica de frecuencia de accesos](capturas/11b_analitica_accesos.jpg)
+
+**Admin: auditoría con la foto del odómetro desde Storage**
+
+![Admin: auditoría con la foto del odómetro desde Storage](capturas/12_auditoria_foto_storage.jpg)
+
+**Supabase: tablas del esquema**
+
+![Supabase: tablas del esquema](capturas/13_supabase_tablas.jpg)
+
+**Supabase: bucket `evidencias-vehiculares` y sus carpetas**
+
+![Supabase: bucket `evidencias-vehiculares` y sus carpetas](capturas/14a_supabase_bucket_carpetas.jpg)
+
+**Supabase: configuración del bucket (privado, 800 KB, tipos MIME)**
+
+![Supabase: configuración del bucket (privado, 800 KB, tipos MIME)](capturas/14b_supabase_bucket_config.jpg)

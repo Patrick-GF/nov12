@@ -14,7 +14,7 @@ y el bucket `evidencias-vehiculares`; no requiere crear tablas nuevas.
 ├── sql/00_esquema_base.sql        # script SQL del profesor: crea las 4 tablas y los datos (¡hace DROP!)
 ├── sql/01_opcional_reglas_en_bd.sql  # opcional: trigger, función y vista equivalentes a la lógica de la app
 ├── scripts/generar_credenciales.py
-├── docs/INFORME_TECNICO.md
+├── docs/INFORME_TECNICO.md   # informe técnico (arquitectura, flujos) · docs/capturas/ = validación
 ├── .streamlit/secrets.toml  # local, ignorado por git (no se sube)
 └── app2.py                  # exporta las tablas a CSV/Excel
 ```
@@ -22,7 +22,7 @@ y el bucket `evidencias-vehiculares`; no requiere crear tablas nuevas.
 ## Puesta en marcha local (VS Code)
 
 1. `python -m venv venv && source venv/bin/activate && pip install -r requirements.txt`
-2. Crea `.streamlit/secrets.toml` con este contenido (URL y clave de Supabase entregadas por el profesor):
+2. Crea `.streamlit/secrets.toml` con este contenido (URL y clave `secret` de tu proyecto Supabase: Project Settings → API Keys):
    ```toml
    [supabase]
    url = "https://TU-PROYECTO.supabase.co"
@@ -32,12 +32,14 @@ y el bucket `evidencias-vehiculares`; no requiere crear tablas nuevas.
    `credenciales_iniciales.csv` (usuarios `guardia` y `admin`; los conductores entran con su RUT + clave común).
 4. `streamlit run app/main.py`
 
-### Base de datos propia (opcional)
+### Base de datos (Supabase)
 
-Con el proyecto Supabase del profesor no hace falta ejecutar SQL. Si montas uno propio y vacío: SQL Editor →
-ejecuta `sql/00_esquema_base.sql` (crea las 4 tablas con sus 30 conductores, 15 vehículos y 18 autorizaciones) y,
-si quieres que la BD también aplique las reglas, `sql/01_opcional_reglas_en_bd.sql`. Crea además el bucket
-`evidencias-vehiculares` (límite 800 KB; debe permitir imágenes y también `application/json`, porque ahí se guarda la bitácora de accesos) y cambia URL y clave en `secrets.toml`.
+1. Crea un proyecto Supabase propio y vacío.
+2. SQL Editor → ejecuta `sql/00_esquema_base.sql`: crea las 4 tablas con sus 30 conductores, 15 vehículos y
+   18 autorizaciones. Si quieres que la BD también aplique las reglas, ejecuta además `sql/01_opcional_reglas_en_bd.sql`.
+3. Storage → crea el bucket privado `evidencias-vehiculares` (límite 800 KB; debe permitir imágenes y también
+   `application/json`, porque ahí se guarda la bitácora de accesos). `01_opcional_reglas_en_bd.sql` también lo crea.
+4. Copia la URL y la clave en `.streamlit/secrets.toml`.
 
 ## Despliegue (Streamlit Community Cloud)
 

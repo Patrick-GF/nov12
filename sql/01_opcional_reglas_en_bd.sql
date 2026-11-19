@@ -101,7 +101,9 @@ left join lateral (
 ) r on true;
 
 -- 5. Storage: bucket de evidencias (800 KB por imagen). Permite JSON porque la bitácora de accesos se guarda ahí.
---    No modifica uno ya existente (si ya existe, ver update de allowed_mime_types en el README).
+--    No modifica uno ya existente. Si el bucket ya existía sin JSON, ejecuta:
+--    update storage.buckets set allowed_mime_types = array['image/jpeg','image/png','image/webp','application/json']
+--    where id = 'evidencias-vehiculares';
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('evidencias-vehiculares', 'evidencias-vehiculares', false, 819200,
         array['image/jpeg', 'image/png', 'image/webp', 'application/json'])
